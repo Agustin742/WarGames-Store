@@ -25,6 +25,11 @@ export class CategoryController {
     return this.categoryService.findTree();
   }
 
+  @Get('tree-recursive')
+  findTreeRecursive() {
+    return this.categoryService.findTreeRecursive();
+  }
+
   @Patch(':id')
   updateCategory(
     @Param('id') id: string,
