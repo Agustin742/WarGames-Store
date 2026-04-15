@@ -13,7 +13,7 @@ export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(name: string, parentId?: number) {
-    if (parentId) {
+    if (parentId !== undefined) {
       const parent = await this.prisma.category.findUnique({
         where: {
           id: parentId,
