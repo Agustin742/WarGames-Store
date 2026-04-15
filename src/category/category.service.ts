@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateCategoryDto } from './dto/updateCategory.dto';
 
 @Injectable()
 export class CategoryService {
@@ -47,7 +48,7 @@ export class CategoryService {
     });
   }
 
-  async update(id: number, name: string) {
+  async update(id: number, data: UpdateCategoryDto) {
     const category = await this.prisma.category.findUnique({
       where: { id },
     });
@@ -58,10 +59,9 @@ export class CategoryService {
 
     return this.prisma.category.update({
       where: { id },
-      data: { name },
+      data,
     });
   }
-
   async delete(id: number) {
     const category = await this.prisma.category.findUnique({
       where: { id },
