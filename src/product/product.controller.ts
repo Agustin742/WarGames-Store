@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -33,20 +34,20 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOneProduct(@Param('id') id: string) {
-    return this.productService.findOne(Number(id));
+  findOneProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')
   updateProduct(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductoDto,
   ) {
-    return this.productService.update(Number(id), updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
-  removeProduct(@Param('id') id: string) {
-    return this.productService.remove(Number(id));
+  removeProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.remove(id);
   }
 }

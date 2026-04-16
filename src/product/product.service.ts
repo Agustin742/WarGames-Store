@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CategoryService } from 'src/category/category.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductoDto } from './dto/createProduct.dto';
 import { UpdateProductoDto } from './dto/updateProducto.dto';
+import { CategoryService } from 'src/category/category.service';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -26,7 +27,7 @@ export class ProductService {
   }
 
   async findAll(name?: string, categoryId?: number) {
-    let where: any = {};
+    const where: Prisma.ProductWhereInput = {};
 
     if (name) {
       where.name = {

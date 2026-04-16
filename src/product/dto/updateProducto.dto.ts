@@ -1,4 +1,11 @@
-import { IsInt, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class UpdateProductoDto {
   @IsOptional()
@@ -16,5 +23,6 @@ export class UpdateProductoDto {
 
   @IsOptional()
   @IsInt()
+  @Min(1)
   categoryId?: number;
 }

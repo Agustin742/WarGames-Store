@@ -1,7 +1,16 @@
-import { IsInt, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class CreateProductoDto {
   @IsString()
+  @IsNotEmpty()
   @MaxLength(255)
   name!: string;
 
@@ -14,5 +23,6 @@ export class CreateProductoDto {
   imageUrl?: string;
 
   @IsInt()
+  @Min(1)
   categoryId!: number;
 }
