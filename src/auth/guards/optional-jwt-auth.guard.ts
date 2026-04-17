@@ -4,7 +4,7 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class OptionalJwtAuthGuard extends AuthGuard('jwt') {
-  handleRequest<TUser = JwtPayload>(
+  handleRequest<TUser = JwtPayload | null>(
     err: unknown,
     user: unknown,
     _info: unknown,

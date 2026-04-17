@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsInt,
   IsOptional,
@@ -21,6 +22,7 @@ class ItemDto {
 
 export class CreateWhatsappOrder {
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ItemDto)
   items!: ItemDto[];

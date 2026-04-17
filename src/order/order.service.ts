@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -12,7 +16,7 @@ export class OrderService {
     customerName?: string,
     notes?: string,
   ) {
-    const productIds = items.map((i) => i.productId);
+    const productIds = [...new Set(items.map((i) => i.productId))];
 
     const products = await this.prisma.product.findMany({
       where: {
@@ -20,7 +24,7 @@ export class OrderService {
       },
     });
 
-    if (products.length !== items.length) {
+    if (products.length !== productIds.length) {
       throw new NotFoundException('Some products not found');
     }
 
@@ -55,6 +59,10 @@ export class OrderService {
 
   generateWhatsappLink(message: string) {
     const phone = process.env.PHONE_NUMBER;
+
+    if (!phone) {
+      throw new InternalServerErrorException('PHONE_NUMBER is not configured');
+    }
 
     const encodedMessage = encodeURIComponent(message);
 
