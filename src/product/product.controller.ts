@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductoDto } from './dto/createProduct.dto';
@@ -16,16 +18,22 @@ import { UpdateProductoDto } from './dto/updateProducto.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as multerFileInterface from './interfaces/multer-file.interface';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @Post()
-  createProduct(@Body() createProductDto: CreateProductoDto) {
-    return this.productService.create(createProductDto);
+  @UseInterceptors(FileInterceptor('file'))
+  createProduct(
+    @Body() dto: CreateProductoDto,
+    @UploadedFile() file?: multerFileInterface.MulterFile,
+  ) {
+    return this.productService.create(dto, file);
   }
 
   @Get()
@@ -44,20 +52,22 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
   updateProduct(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductDto: UpdateProductoDto,
+    @Param('id') id: string,
+    @Body() dto: UpdateProductoDto,
+    @UploadedFile() file?: multerFileInterface.MulterFile,
   ) {
-    return this.productService.update(id, updateProductDto);
+    return this.productService.update(Number(id), dto, file);
   }
 
+  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
-  removeProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.remove(id);
+  deleteProduct(@Param('id') id: string) {
+    return this.productService.remove(Number(id));
   }
 }

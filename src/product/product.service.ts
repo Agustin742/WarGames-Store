@@ -4,15 +4,18 @@ import { CreateProductoDto } from './dto/createProduct.dto';
 import { UpdateProductoDto } from './dto/updateProducto.dto';
 import { CategoryService } from 'src/category/category.service';
 import { Prisma } from 'generated/prisma/client';
+import { UploadsService } from 'src/uploads/uploads.service';
+import { MulterFile } from './interfaces/multer-file.interface';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly categoryService: CategoryService,
+    private readonly uploadService: UploadsService,
   ) {}
 
-  async create(data: CreateProductoDto) {
+  async create(data: CreateProductoDto, file?: MulterFile) {
     const category = await this.prisma.category.findUnique({
       where: { id: data.categoryId },
     });
@@ -21,8 +24,21 @@ export class ProductService {
       throw new NotFoundException('Category not found');
     }
 
+    let imageUrl: string | null = null;
+    let imagePublicId: string | null = null;
+
+    if (file) {
+      const uploaded = await this.uploadService.uploadImage(file);
+      imageUrl = uploaded.url;
+      imagePublicId = uploaded.public_id;
+    }
+
     return this.prisma.product.create({
-      data,
+      data: {
+        ...data,
+        imageUrl,
+        imagePublicId,
+      },
     });
   }
 
@@ -67,7 +83,7 @@ export class ProductService {
     return product;
   }
 
-  async update(id: number, data: UpdateProductoDto) {
+  async update(id: number, data: UpdateProductoDto, file?: MulterFile) {
     const product = await this.prisma.product.findUnique({
       where: { id },
     });
@@ -88,9 +104,27 @@ export class ProductService {
       }
     }
 
+    let imageUrl = product.imageUrl;
+    let imagePublicId = product.imagePublicId;
+
+    if (file) {
+      const uploaded = await this.uploadService.uploadImage(file);
+
+      imageUrl = uploaded.url;
+      imagePublicId = uploaded.public_id;
+
+      if (product.imagePublicId) {
+        await this.uploadService.deleteImage(product.imagePublicId);
+      }
+    }
+
     return this.prisma.product.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        imageUrl,
+        imagePublicId,
+      },
     });
   }
 
@@ -101,6 +135,10 @@ export class ProductService {
 
     if (!product) {
       throw new NotFoundException('Product not found');
+    }
+
+    if (product.imagePublicId) {
+      await this.uploadService.deleteImage(product.imagePublicId);
     }
 
     return this.prisma.product.delete({
