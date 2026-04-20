@@ -35,6 +35,7 @@ model Product {
   name        String  @db.VarChar(255)
   description String?
   imageUrl    String?
+  imagePublicId  String?
 
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])

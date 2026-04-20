@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -24,5 +25,6 @@ export class CreateProductoDto {
 
   @IsInt()
   @Min(1)
+  @Type(() => Number)
   categoryId!: number;
 }

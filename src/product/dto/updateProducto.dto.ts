@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsOptional,
@@ -24,5 +25,6 @@ export class UpdateProductoDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Type(() => Number)
   categoryId?: number;
 }
