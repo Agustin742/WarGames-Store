@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import cloudinary from './cloudinary.config';
 
 type MulterFile = {
@@ -18,6 +18,8 @@ function isMulterFile(file: unknown): file is MulterFile {
 
 @Injectable()
 export class UploadsService {
+  private readonly logger = new Logger(UploadsService.name);
+
   async uploadImage(file: unknown): Promise<{
     url: string;
     public_id: string;
@@ -49,6 +51,12 @@ export class UploadsService {
   }
 
   async deleteImage(publicId: string): Promise<void> {
-    await cloudinary.uploader.destroy(publicId);
+    try {
+      await cloudinary.uploader.destroy(publicId);
+    } catch (err) {
+      this.logger.warn(
+        `Failed to delete Cloudinary asset ${publicId}: ${String(err)}`,
+      );
+    }
   }
 }

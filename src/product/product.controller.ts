@@ -20,6 +20,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multerFileInterface from './interfaces/multer-file.interface';
+import { imageFileFilter } from 'src/uploads/image-filter';
 
 @Controller('product')
 export class ProductController {
@@ -28,7 +29,14 @@ export class ProductController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: imageFileFilter,
+      limits: {
+        fileSize: 2 * 1024 * 1024, // 2MB
+      },
+    }),
+  )
   createProduct(
     @Body() dto: CreateProductoDto,
     @UploadedFile() file?: multerFileInterface.MulterFile,
@@ -55,7 +63,14 @@ export class ProductController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: imageFileFilter,
+      limits: {
+        fileSize: 2 * 1024 * 1024, // 2MB
+      },
+    }),
+  )
   updateProduct(
     @Param('id') id: string,
     @Body() dto: UpdateProductoDto,

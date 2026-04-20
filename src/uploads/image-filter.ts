@@ -11,7 +11,7 @@ export const imageFileFilter = (
 ) => {
   const f = file as MulterLikeFile;
 
-  if (!f?.mimetype || !f.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+  if (!f?.mimetype || !/^image\/(jpg|jpeg|png|webp)$/.test(f.mimetype)) {
     return callback(new BadRequestException('Only image files allowed'), false);
   }
 
