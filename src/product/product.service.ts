@@ -6,7 +6,7 @@ import { CategoryService } from 'src/category/category.service';
 import { Prisma } from 'generated/prisma/client';
 import { UploadsService } from 'src/uploads/uploads.service';
 import { MulterFile } from './interfaces/multer-file.interface';
-import { GetProductsQueryDto } from './dto/getProductsQuery.dto';
+import { GetProductsQueryDto, ProductSort } from './dto/getProductsQuery.dto';
 
 @Injectable()
 export class ProductService {
@@ -46,6 +46,10 @@ export class ProductService {
   async findAll(query: GetProductsQueryDto) {
     const { name, categoryId, page = 1, limit = 10 } = query;
 
+    const safeLimit = Math.min(limit, 50);
+    const safePage = Math.max(page, 1);
+    const skip = (safePage - 1) * safeLimit;
+
     const where: Prisma.ProductWhereInput = {};
 
     if (name) {
@@ -63,8 +67,16 @@ export class ProductService {
       };
     }
 
-    const safeLimit = Math.min(limit, 50); // máximo 50
-    const skip = (page - 1) * safeLimit;
+    const sortMap: Record<ProductSort, Prisma.ProductOrderByWithRelationInput> =
+      {
+        name_asc: { name: 'asc' },
+        name_desc: { name: 'desc' },
+        createdAt_asc: { createdAt: 'asc' },
+        createdAt_desc: { createdAt: 'desc' },
+      };
+
+    const orderBy: Prisma.ProductOrderByWithRelationInput =
+      sortMap[query.sort ?? ProductSort.CREATED_AT_DESC];
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
@@ -72,7 +84,7 @@ export class ProductService {
         include: { category: true },
         skip,
         take: safeLimit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
       }),
       this.prisma.product.count({ where }),
     ]);
@@ -81,7 +93,7 @@ export class ProductService {
       data,
       meta: {
         total,
-        page,
+        page: safePage,
         limit: safeLimit,
         lastPage: Math.ceil(total / safeLimit),
       },

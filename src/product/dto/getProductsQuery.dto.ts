@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+
+export enum ProductSort {
+  NAME_ASC = 'name_asc',
+  NAME_DESC = 'name_desc',
+  CREATED_AT_ASC = 'createdAt_asc',
+  CREATED_AT_DESC = 'createdAt_desc',
+}
 
 export class GetProductsQueryDto {
   @IsString()
@@ -22,4 +29,8 @@ export class GetProductsQueryDto {
   @IsInt()
   @Min(1)
   limit: number = 10;
+
+  @IsOptional()
+  @IsEnum(ProductSort)
+  sort?: ProductSort;
 }
