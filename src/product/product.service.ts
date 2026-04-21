@@ -82,7 +82,7 @@ export class ProductService {
       meta: {
         total,
         page,
-        limit: safeLimit, // 👈 importante devolver el real
+        limit: safeLimit,
         lastPage: Math.ceil(total / safeLimit),
       },
     };
