@@ -6,6 +6,7 @@ import { CategoryService } from 'src/category/category.service';
 import { Prisma } from 'generated/prisma/client';
 import { UploadsService } from 'src/uploads/uploads.service';
 import { MulterFile } from './interfaces/multer-file.interface';
+import { GetProductsQueryDto } from './dto/getProductsQuery.dto';
 
 @Injectable()
 export class ProductService {
@@ -42,7 +43,9 @@ export class ProductService {
     });
   }
 
-  async findAll(name?: string, categoryId?: number) {
+  async findAll(query: GetProductsQueryDto) {
+    const { name, categoryId, page = 1, limit = 10 } = query;
+
     const where: Prisma.ProductWhereInput = {};
 
     if (name) {
@@ -60,12 +63,29 @@ export class ProductService {
       };
     }
 
-    return this.prisma.product.findMany({
-      where,
-      include: {
-        category: true,
+    const safeLimit = Math.min(limit, 50); // máximo 50
+    const skip = (page - 1) * safeLimit;
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where,
+        include: { category: true },
+        skip,
+        take: safeLimit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit: safeLimit, // 👈 importante devolver el real
+        lastPage: Math.ceil(total / safeLimit),
       },
-    });
+    };
   }
 
   async findOne(id: number) {
