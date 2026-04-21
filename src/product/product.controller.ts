@@ -21,6 +21,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multerFileInterface from './interfaces/multer-file.interface';
 import { imageFileFilter } from 'src/uploads/image-filter';
+import { GetProductsQueryDto } from './dto/getProductsQuery.dto';
 
 @Controller('product')
 export class ProductController {
@@ -45,14 +46,8 @@ export class ProductController {
   }
 
   @Get()
-  findAllProducts(
-    @Query('name') name?: string,
-    @Query('categoryId') categoryId?: string,
-  ) {
-    return this.productService.findAll(
-      name,
-      categoryId ? Number(categoryId) : undefined,
-    );
+  findAllProducts(@Query() query: GetProductsQueryDto) {
+    return this.productService.findAll(query);
   }
 
   @Get(':id')
