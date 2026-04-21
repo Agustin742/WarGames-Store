@@ -16,6 +16,10 @@ model User {
   createdAt DateTime @default(now())
   isAdmin   Boolean
   updatedAt DateTime @updatedAt
+
+  isVerified              Boolean   @default(false)
+  verificationCode        String?
+  verificationCodeExpires DateTime?
 }
 
 model Category {
@@ -31,11 +35,11 @@ model Category {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        String  @db.VarChar(255)
-  description String?
-  imageUrl    String?
-  imagePublicId  String?
+  id            Int     @id @default(autoincrement())
+  name          String  @db.VarChar(255)
+  description   String?
+  imageUrl      String?
+  imagePublicId String?
 
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
