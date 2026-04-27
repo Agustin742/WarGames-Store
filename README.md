@@ -1,6 +1,6 @@
 # Catalog Store — Backend API
 
-REST API built with **NestJS**, **Prisma** and **PostgreSQL** for a board games e-commerce store. Includes authentication with email verification, product/category management, image uploads and WhatsApp order generation.
+REST API built with **NestJS**, **Prisma** and **PostgreSQL** for a store. Includes authentication with email verification, product/category management, image uploads and WhatsApp order generation.
 
 ---
 
