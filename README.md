@@ -1,98 +1,226 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# WarGames Store — Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API built with **NestJS**, **Prisma** and **PostgreSQL** for a board games e-commerce store. Includes authentication with email verification, product/category management, image uploads and WhatsApp order generation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Tech Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Layer | Technology |
+|---|---|
+| Framework | NestJS |
+| ORM | Prisma (PostgreSQL adapter) |
+| Database | PostgreSQL |
+| Auth | JWT + Passport |
+| Image storage | Cloudinary |
+| Email | Resend |
+| Validation | class-validator / class-transformer |
+| Scheduler | @nestjs/schedule |
 
-## Project setup
+---
 
-```bash
-$ npm install
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Cloudinary account
+- Resend account (for transactional emails)
+
+---
+
+## Environment Variables
+
+Create a `.env` file at the project root with the following variables:
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+
+# Auth
+JWT_SECRET=your_jwt_secret
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Email (Resend)
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM=noreply@yourdomain.com
+
+# Orders
+PHONE_NUMBER=5491112345678   # WhatsApp number (with country code, no +)
+
+# Server
+PORT=3000
 ```
 
-## Compile and run the project
+---
+
+## Installation
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+## Database Setup
 
 ```bash
-# unit tests
-$ npm run test
+# Run all migrations
+npx prisma migrate deploy
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Or for development (creates migration from schema changes)
+npx prisma migrate dev
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Running the App
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Development
+npm run start:dev
+
+# Production
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## API Reference
 
-Check out a few resources that may come in handy when working with NestJS:
+All endpoints are prefixed with the base URL of the server (default `http://localhost:3000`).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Auth — `/auth`
 
-## Support
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/auth/register` | Public | Register a new user. Sends a 6-digit verification code by email. Body: `{ "user": { "userName", "email", "password" } }` |
+| POST | `/auth/verify-email` | Public | Verify email with the received code. Body: `{ "email", "code" }` |
+| POST | `/auth/resend-verification` | Public | Resend verification code (only if the previous one has expired). Body: `{ "user": { "email" } }` |
+| POST | `/auth/login` | Public | Login and receive a JWT token. Body: `{ "user": { "email", "password" } }` |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### User — `/user`
 
-## Stay in touch
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/user/me` | JWT | Get the authenticated user's profile |
+| PATCH | `/user/me` | JWT | Update username. Body: `{ "userName" }` |
+| PATCH | `/user/me/password` | JWT | Change password. Body: `{ "currentPassword", "newPassword" }` |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Categories — `/category`
 
-## License
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/category` | Admin | Create a category. Body: `{ "name", "parentId?" }` |
+| GET | `/category` | Public | List all categories (flat) |
+| GET | `/category/tree` | Public | Category tree (2 levels deep) |
+| GET | `/category/tree-recursive` | Public | Full recursive category tree |
+| PATCH | `/category/:id` | Admin | Update category name |
+| DELETE | `/category/:id` | Admin | Delete a category (must have no children or products) |
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Products — `/product`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/product` | Admin | Create a product. `multipart/form-data` with fields: `name`, `categoryId`, `description?`, `imageUrl?` and optional image `file` (max 2 MB, jpg/png/webp) |
+| GET | `/product` | Public | List products with filters, pagination and sorting |
+| GET | `/product/:id` | Public | Get a single product |
+| PATCH | `/product/:id` | Admin | Update a product (same fields as create, all optional) |
+| DELETE | `/product/:id` | Admin | Delete a product (also removes image from Cloudinary) |
+
+**Query params for `GET /product`:**
+
+| Param | Type | Description |
+|---|---|---|
+| `name` | string | Case-insensitive name search |
+| `categoryId` | number | Filters by category and all its descendants |
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Items per page, max 50 (default: 10) |
+| `sort` | enum | `name_asc`, `name_desc`, `createdAt_asc`, `createdAt_desc` |
+
+### Orders — `/order`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/order/whatsapp-preview` | Optional JWT | Generate a pre-filled WhatsApp message with the selected products |
+
+Body:
+```json
+{
+  "items": [{ "productId": 1, "quantity": 2 }],
+  "customerName": "Juan",
+  "notes": "Sin envío"
+}
+```
+
+Returns `message` (plain text) and `whatsappUrl` (ready-to-open `wa.me` link). If the user is authenticated, their username is used automatically instead of `customerName`.
+
+### Uploads — `/uploads`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/uploads/image` | Admin | Upload an image to Cloudinary. `multipart/form-data` with `file` field (max 2 MB) |
+
+---
+
+## Authentication
+
+Protected routes require a Bearer token in the `Authorization` header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+Tokens are obtained from `POST /auth/login` and expire after **1 day**.
+
+Admin-only routes additionally require the user to have `isAdmin: true` in the database.
+
+---
+
+## Email Verification Flow
+
+1. User registers → receives a **6-digit code** valid for **10 minutes**.
+2. User submits the code to `/auth/verify-email`.
+3. If the code expires, the user can request a new one via `/auth/resend-verification` (only if the current code is already expired).
+4. Unverified accounts older than **24 hours** are automatically deleted by a scheduled job that runs every hour.
+
+---
+
+## Project Structure
+
+```
+src/
+├── auth/           # JWT auth, guards, strategies, DTOs
+├── category/       # Category CRUD with recursive tree support
+├── email/          # Resend email service
+├── job/            # Scheduled tasks (cleanup unverified users)
+├── order/          # WhatsApp order message generator
+├── prisma/         # PrismaService (global module)
+├── product/        # Product CRUD with image upload
+├── uploads/        # Cloudinary upload/delete service
+└── user/           # User profile and password management
+prisma/
+├── schema.prisma   # Data models
+└── migrations/     # SQL migration history
+```
+
+---
+
+## Data Models
+
+### User
+Fields: `id`, `userName` (unique), `email` (unique), `password` (hashed), `isAdmin`, `isVerified`, `verificationCode`, `verificationCodeExpires`, `createdAt`, `updatedAt`
+
+### Category
+Fields: `id`, `name`, `parentId` (self-referencing for subcategories), `createdAt`
+
+### Product
+Fields: `id`, `name`, `description`, `imageUrl`, `imagePublicId`, `categoryId`, `createdAt`, `updatedAt`
+
+---
+
+## Notes
+
+- Passwords are hashed with **bcrypt** (10 rounds).
+- Images are stored in Cloudinary under the `wargames/` folder. When a product image is replaced or the product is deleted, the old image is removed from Cloudinary automatically.
+- The `ValidationPipe` is configured globally with `whitelist: true` and `forbidNonWhitelisted: true`, so any extra fields in request bodies will be rejected.
